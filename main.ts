@@ -7,16 +7,6 @@ namespace SpriteKind {
     export const lifebar = SpriteKind.create()
     export const HorribleThing = SpriteKind.create()
 }
-function _10shoot (Boss: Sprite, ProjectileImage: Image) {
-    for (let index = 0; index <= MAX - 1; index++) {
-        _60_sine = 60 * Math.sin((360 / 10 * index + offset) / 57.3)
-        _60_cosine = 60 * Math.cos((360 / 10 * index + offset) / 57.3)
-        _100_cosine = 100 * Math.sin((360 / 10 * index + offset) / 57.3)
-        _100_sine = 100 * Math.cos((360 / 10 * index + offset) / 57.3)
-        projectileSprite = sprites.createProjectileFromSprite(ProjectileImage, Boss, _60_sine, _60_cosine)
-        projectileSprite = sprites.createProjectileFromSprite(ProjectileImage, Boss, _100_sine, _100_cosine)
-    }
-}
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     projectile = sprites.createProjectileFromSprite(img`
         . . . . . . . . 
@@ -153,6 +143,16 @@ sprites.onOverlap(SpriteKind.PlayerProjectile, SpriteKind.Enemy, function (sprit
     statusbar.value += -1
     timesHit += 1
 })
+function _10shoot (Boss: Sprite, ProjectileImage: Image) {
+    for (let index = 0; index <= MAX - 1; index++) {
+        _60_sine = 60 * Math.sin((360 / 10 * index + offset) / 57.3)
+        _60_cosine = 60 * Math.cos((360 / 10 * index + offset) / 57.3)
+        _100_cosine = 100 * Math.sin((360 / 10 * index + offset) / 57.3)
+        _100_sine = 100 * Math.cos((360 / 10 * index + offset) / 57.3)
+        projectileSprite = sprites.createProjectileFromSprite(ProjectileImage, Boss, _60_sine, _60_cosine)
+        projectileSprite = sprites.createProjectileFromSprite(ProjectileImage, Boss, _100_sine, _100_cosine)
+    }
+}
 info.onLifeZero(function () {
     game.splash("" + (75 - timesHit) + " " + "Enemy Health Left")
     game.over(false)
@@ -586,21 +586,21 @@ function enemyShoot (projectileImage: Image, Boss: Sprite) {
 }
 let projectile2: Sprite = null
 let HorribleThingTrue = false
+let projectileSprite: Sprite = null
+let _100_sine = 0
+let _100_cosine = 0
+let _60_cosine = 0
+let _60_sine = 0
+let offset = 0
 let isMovingLeft = false
 let LiveLoseCounter = 0
+let MAX = 0
 let timesHit = 0
 let statusbar: StatusBarSprite = null
 let projectileImage: Image = null
 let Skelly: Sprite = null
 let ThePlayer: Sprite = null
 let projectile: Sprite = null
-let projectileSprite: Sprite = null
-let _100_sine = 0
-let _100_cosine = 0
-let _60_cosine = 0
-let offset = 0
-let _60_sine = 0
-let MAX = 0
 startGame(60, 20)
 game.onUpdateInterval(2000, function () {
     enemyShoot(img`
