@@ -8,17 +8,20 @@ namespace SpriteKind {
     export const HorribleThing = SpriteKind.create()
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    projectile = sprites.createProjectileFromSprite(img`
-        . . . . . . . . 
-        . . . 4 4 . . . 
-        . . 5 4 4 5 . . 
-        . 4 4 2 2 4 4 . 
-        . 4 4 2 2 4 4 . 
-        . . 5 4 4 5 . . 
-        . . . 4 4 . . . 
-        . . . . . . . . 
-        `, ThePlayer, 0, -100)
-    projectile.setKind(SpriteKind.PlayerProjectile)
+    if (energyStatusbar.value > 0) {
+        projectile2 = sprites.createProjectileFromSprite(img`
+            . . . 5 5 . . . 
+            . . 5 4 4 5 . . 
+            . 5 4 5 5 4 5 . 
+            5 4 5 4 4 5 4 5 
+            5 4 5 4 4 5 4 5 
+            . 5 4 5 5 4 5 . 
+            . . 5 4 4 5 . . 
+            . . . 5 5 . . . 
+            `, ThePlayer, 0, -100)
+        projectile2.setKind(SpriteKind.PlayerProjectile)
+        energyStatusbar.value += -10
+    }
 })
 sprites.onOverlap(SpriteKind.HorribleThing, SpriteKind.Player, function (sprite, otherSprite) {
     info.changeLifeBy(-1)
@@ -86,19 +89,27 @@ function startGame (Countdown: number, Lives: number) {
         . . . . . . . . 
         `
     statusbar = statusbars.create(75, 10, StatusBarKind.EnemyHealth)
+    energyStatusbar = statusbars.create(50, 4, StatusBarKind.Energy)
     timesHit = 0
     MAX = 10
     LiveLoseCounter = 0
     isMovingLeft = false
     offset = 36
+    _10 = -10
     statusbar.setLabel("Boss HP")
+    energyStatusbar.setLabel("Energy", 1)
     statusbar.setBarBorder(3, 13)
+    statusbar.setStatusBarFlag(StatusBarFlag.SmoothTransition, true)
+    energyStatusbar.setStatusBarFlag(StatusBarFlag.SmoothTransition, true)
+    energyStatusbar.max = 100
+    energyStatusbar.value = 100
     statusbar.setPosition(75, 16)
+    energyStatusbar.setPosition(44, 110)
     controller.moveSprite(ThePlayer, 100, 100)
     tiles.placeOnTile(Skelly, tiles.getTileLocation(0, 0))
     tiles.placeOnTile(ThePlayer, tiles.getTileLocation(5, 6))
-    flyToCenter()
     ThePlayer.setFlag(SpriteFlag.StayInScreen, true)
+    flyToCenter()
     info.setLife(Lives)
     info.startCountdown(Countdown)
 }
@@ -584,13 +595,14 @@ function enemyShoot (projectileImage: Image, Boss: Sprite) {
         }
     }
 }
-let projectile2: Sprite = null
 let HorribleThingTrue = false
 let projectileSprite: Sprite = null
 let _100_sine = 0
 let _100_cosine = 0
 let _60_cosine = 0
 let _60_sine = 0
+let projectile: Sprite = null
+let _10 = 0
 let offset = 0
 let isMovingLeft = false
 let LiveLoseCounter = 0
@@ -600,7 +612,8 @@ let statusbar: StatusBarSprite = null
 let projectileImage: Image = null
 let Skelly: Sprite = null
 let ThePlayer: Sprite = null
-let projectile: Sprite = null
+let projectile2: Sprite = null
+let energyStatusbar: StatusBarSprite = null
 startGame(60, 20)
 game.onUpdateInterval(2000, function () {
     enemyShoot(img`
@@ -613,6 +626,9 @@ game.onUpdateInterval(2000, function () {
         . . . 6 6 . . . 
         . . . . . . . . 
         `, Skelly)
+})
+game.onUpdateInterval(1500, function () {
+    energyStatusbar.value += Math.abs(_10)
 })
 forever(function () {
     if (isMovingLeft) {
